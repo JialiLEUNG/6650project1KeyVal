@@ -1,5 +1,8 @@
 /**
  * The MultiThreadServer implements a Multithreaded server in Java.
+ * The server offers an echo service to multiple clients.
+ * It includes timeout handling to prevent server threads from blocking if a client is stalled
+ *
  * What separates the single threaded server from a multithreaded server is that
  * the single threaded server processes the incoming requests in the same thread that
  * accepts the client connection.
@@ -11,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class MultiThreadServer implements Runnable{
+    /* Server information */
     protected int           port = 32000;
     protected ServerSocket  serverSocket = null;
     protected boolean       isStopped = false; // whether the server is terminated.

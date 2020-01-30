@@ -1,5 +1,8 @@
 /**
- * The SingleThreadServer implements a singlethreaded server in Java.
+ * The SingleThreadServer implements a single-threaded server in Java.
+ * The server offers an echo service to clients.
+ * It includes timeout handling to prevent server threads from blocking if a client is stalled
+ *
  * What separates the single threaded server from a multithreaded server is that
  * the single threaded server processes the incoming requests in the same thread that
  * accepts the client connection.
@@ -9,12 +12,16 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class SingleThreadServer implements Runnable{
+
+    /* Server information */
     protected int           port = 32000;
     protected ServerSocket  serverSocket = null;
     protected boolean       isStopped = false; // whether the server is terminated.
     protected Thread        runningThread = null;
+    private static final int timeout_length = 60000; // 1 minute
 
     // constructor
     public SingleThreadServer(int port){
@@ -36,6 +43,7 @@ public class SingleThreadServer implements Runnable{
         while(!isStopped()){
             Socket clientSocket = null;
             try{
+                // listen for connection
                 clientSocket = this.serverSocket.accept();
                 System.out.println("New client connected...");
             } catch (IOException e){
@@ -47,6 +55,7 @@ public class SingleThreadServer implements Runnable{
             }
             try{
                 System.out.println("Server starts to process request...");
+
                 processClientRequest(clientSocket);
             } catch (Exception e){
                 e.printStackTrace();
@@ -57,11 +66,13 @@ public class SingleThreadServer implements Runnable{
     }
 
     private void processClientRequest(Socket clientSocket) throws Exception{
+        // once client is connected, use socket stream to send a prompt message to client
         OutputStream output = clientSocket.getOutputStream();
         PrintWriter writer = new PrintWriter(output, true);
+        // Prompt for client to enter something.
         writer.println("Please type something and press Enter: \n");
 
-
+        // Create a InputStream  and BufferedReader for reading from socket
         InputStream input = clientSocket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader((input)));
         while(clientSocket.isConnected()){
@@ -90,8 +101,13 @@ public class SingleThreadServer implements Runnable{
         try{
             this.serverSocket = new ServerSocket(this.port);
             System.out.println("Server is listening on port " + port);
+            // set timeout to prevent stalled connections.
+            this.serverSocket.setSoTimeout(timeout_length);
+        } catch (SocketTimeoutException e){
+            System.err.println("No data arrives within 5s. " + e.getMessage());
+
         } catch (IOException e){
-            throw new RuntimeException("Cannot open port" + port, e);
+            throw new RuntimeException("Cannot open port " + port, e);
         }
     }
 
@@ -100,7 +116,7 @@ public class SingleThreadServer implements Runnable{
         new Thread(server).start();
 
         try{
-            Thread.sleep(1000*1000);
+            Thread.sleep(60*1000);
         } catch(InterruptedException e){
             e.printStackTrace();
         }
