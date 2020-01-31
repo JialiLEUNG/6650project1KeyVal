@@ -11,19 +11,16 @@ import java.util.*;
  */
 public class ServerUDP {
     private DatagramSocket socket;
-    private List<String> listReceived = new ArrayList<String>();
-    private Random random;
     private Map<String, String> store = new HashMap<>();
 
     public ServerUDP() throws SocketException{
         socket = new DatagramSocket();
-        random = new Random();
     }
 
     public static void main(String[] args){
         try{
             ServerUDP server = new ServerUDP();
-            server.receiveRequest();
+            System.out.println("Server is listening.");
             server.service();
         } catch (SocketException e){
             System.err.println("Socket error: " + e.getMessage());
@@ -40,8 +37,9 @@ public class ServerUDP {
             socket.receive(request);
             String sentence = new String(request.getData());
             String[] requestArr = sentence.split(" ");
+            System.out.println("===== Client: " + sentence);
 
-            // send response to client
+            // send response to client based on client input
             InetAddress clientAddress = request.getAddress();
             int clientPort = request.getPort();
             keyValService(requestArr, clientAddress, clientPort);
@@ -49,45 +47,50 @@ public class ServerUDP {
     }
 
     private void keyValService(String[] requestArr, InetAddress clientAddress, int clientPort) throws IOException {
-        while (requestArr.length < 2){
+        if (requestArr.length < 2){
             String errMsg = "Syntax: <operation> <parameter1>. For example: get apple";
             sendResult(errMsg, clientAddress, clientPort);
         }
-        String action = requestArr[0];
-        String key = requestArr[0];
-        if (requestArr.length == 3){
-            while (!action.equals("put")){
-                String errMsg = "For operation of PUT, syntax: <operation> <parameter1> <parameter2>. For example: put apple 10.";
-                sendResult(errMsg, clientAddress, clientPort);
-            }
-        }
 
+        String action = requestArr[0]; // get, put, delete
+        String key = requestArr[0];
 
         switch(action) {
             case "get":
-                String price = store.get(key);
-                sendResult(price, clientAddress, clientPort);
+                if(store.containsKey(key)){
+                    String price = store.get(key);
+                    sendResult("Price of " + key + " :" + price, clientAddress, clientPort);
+                }
+                else{
+                    String errMsg = key + " not found.";
+                    sendResult(errMsg, clientAddress, clientPort);
+                }
                 break;
             case "delete":
                 if (!store.containsKey(key)) {
-                    String errMsg = "Sorry! Store does not carry " + action;
+                    String errMsg =  key + " not found.";
                     sendResult(errMsg, clientAddress, clientPort);
+                }
+                else{
+                    store.remove(key);
+                    sendResult("Delete " + key + " succeed.", clientAddress, clientPort);
                 }
                 break;
             case "put":
                 if (requestArr.length == 3) {
                     store.put(key, requestArr[2]);
-                    break;
+                    sendResult("Put [" + key + ", " + requestArr[2] + "] in store succeed.", clientAddress, clientPort);
                 }
-
-                String errMsg = "For operation of PUT, syntax: <operation> <parameter1> <parameter2>. For example: put apple 10.";
-                sendResult(errMsg, clientAddress, clientPort);
+                else{
+                    String errMsg = "Syntax of put: <operation> <parameter1> <parameter2>. For example: put apple 10.";
+                    sendResult(errMsg, clientAddress, clientPort);
+                }
                 break;
             default:
-                errMsg = "No operation of " + action;
-                sendResult(errMsg, clientAddress, clientPort);
+                sendResult("Operation or key or value incorrect. Syntax: <operation> <parameter1>...", clientAddress, clientPort);
         }
     }
+
 
     private void sendResult(String res, InetAddress clientAddress, int clientPort) throws IOException {
         DatagramPacket response = new DatagramPacket(res.getBytes(), res.getBytes().length, clientAddress, clientPort);
