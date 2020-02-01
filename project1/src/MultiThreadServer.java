@@ -7,6 +7,8 @@
  * the single threaded server processes the incoming requests in the same thread that
  * accepts the client connection.
  * A multithreaded server passes the connection on to a worker thread that processes the request.
+ *
+ * Type "Exit" to exit the program.
  */
 
 import java.io.*;

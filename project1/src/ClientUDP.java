@@ -5,6 +5,8 @@
  * To run this client program, type the following command:
  * java ClientUDP.java 127.0.0.1 32000
  *
+ * Type "Exit" to exit the program.
+ *
  */
 
 import java.io.IOException;
@@ -22,7 +24,7 @@ public class ClientUDP {
     private ClientUDP(String address, int port) throws IOException{
         this.address = InetAddress.getByName(address);
         this.port = port;
-        socket = new DatagramSocket(this.port);
+        socket = new DatagramSocket();
         clientScanner = new Scanner(System.in);
     }
 
@@ -31,6 +33,13 @@ public class ClientUDP {
         while (true) {
             try {
                 String clientInput = clientScanner.nextLine();
+                if (clientInput.equals("Exit")){
+                    System.out.println("===== Closing the connection: " + socket);
+                    socket.close();
+                    System.out.println("===== Connection is closed.");
+                    break;
+                }
+
                 // send a UDP message to server
                 DatagramPacket sent = new DatagramPacket(clientInput.getBytes(), clientInput.getBytes().length, address, port);
                 socket.send(sent);
@@ -42,6 +51,8 @@ public class ClientUDP {
 
                 String message = new String(buffer, 0, received.getLength());
                 System.out.println("===== Server: " + message);
+
+                Thread.sleep(1000);
             } catch (SocketException e) {
                 System.err.println("===== Client error: " + e.getMessage());
                 e.printStackTrace();
@@ -50,6 +61,8 @@ public class ClientUDP {
                 e.printStackTrace();
             } catch (IOException e) {
                 System.err.println("===== Client error: " + e.getMessage());
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
