@@ -11,6 +11,8 @@
  * 2. Send data to the server using an OutputStream.
  * 3. Read data from the server using an InputStream.
  * 4. Close the connection.
+ *
+ * Type "Exit" to exit the program.
  */
 
 import java.io.*;
@@ -38,28 +40,31 @@ public class ClientTCP {
             // Read data from the server using an InputStream
             InputStream input = socket.getInputStream();
 
-            Scanner clientScanner = new Scanner(System.in);
+            Scanner clientScanner = new Scanner(new File("tcpClient.txt"));
+
 
             while(socket.isConnected()){
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                String received = reader.readLine();
-                System.out.println("===== Server: " + received);
+                while (clientScanner.hasNext()){
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    String received = reader.readLine();
+                    System.out.println("===== Server: " + received);
 
-                // get client input from console
-                String sent = clientScanner.nextLine();
-                // The argument true below indicates that
-                // the writer flushes the data after each method call (auto flush).
-                PrintWriter writer = new PrintWriter(output, true);
-                writer.println(sent);
+                    // get client input from console
+                    String sent = clientScanner.nextLine();
+                    // The argument true below indicates that
+                    // the writer flushes the data after each method call (auto flush).
+                    PrintWriter writer = new PrintWriter(output, true);
+                    writer.println(sent);
 
-                if (sent.equals("Exit")){
-                    System.out.println("===== Closing the connection: " + socket);
-                    socket.close();
-                    System.out.println("===== Connection is closed.");
-                    break;
+                    if (sent.equals("Exit")){
+                        System.out.println("===== Closing the connection: " + socket);
+                        socket.close();
+                        System.out.println("===== Connection is closed.");
+                        break;
+                    }
+                    Thread.sleep(1000);
                 }
 
-                Thread.sleep(1000);
             }
         } catch (SocketTimeoutException e){ // Socket timed out
             System.err.println("===== Remote host timed out during read operation: " + e.getMessage());

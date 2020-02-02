@@ -6,7 +6,6 @@
  * java ClientUDP.java 127.0.0.1 32000
  *
  * Type "Exit" to exit the program.
- *
  */
 
 import java.io.IOException;

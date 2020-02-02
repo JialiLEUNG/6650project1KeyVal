@@ -4,6 +4,8 @@ import java.util.*;
 
 /**
  * The ServerUDP demonstrates a single-threaded UDP server program.
+ * The protocol to communicate packet contents for the three request types
+ * along with data passed along as part of the requests (e.g. keys, values, etc.) is shown in keyValService().
  *
  */
 public class SingleThreadUDPServer implements Runnable{
@@ -12,15 +14,11 @@ public class SingleThreadUDPServer implements Runnable{
     private int                 port;
     protected boolean           isStopped = false; // whether the server is terminated.
     protected Thread            runningThread = null;
-    private static final int    timeout_length = 60000; // 1 minute
     private Map<String, String> store = new HashMap<>();
 
     /* constructor for server */
-    public SingleThreadUDPServer(int port) throws SocketException{
+    public SingleThreadUDPServer(int port){
         this.port = port;
-        // The datagramSocket creates a server that binds to the specific port number
-        // so the clients know how to connect to.
-        serverSocket = new DatagramSocket(this.port);
     }
 
 
@@ -32,11 +30,15 @@ public class SingleThreadUDPServer implements Runnable{
         }
         openServerSocket();
 
+
+        // The following while loop does the following:
+        // 1. wait for a client request
+        // 2. process client request
+        // 3. repeat 1.
         while(!isStopped()){
             DatagramPacket request;
             try {
                 // wait for a request from client
-                System.out.println("Server listening for request.");
                 byte[] buffer = new byte[512]; // buffer to receive incoming request from client
                 request = new DatagramPacket(buffer, buffer.length);
                 // blocks until a client request comes in.
@@ -53,6 +55,7 @@ public class SingleThreadUDPServer implements Runnable{
             try{
                 String sentence = new String(request.getData()).trim();
                 String[] requestArr = sentence.split(" ");
+                // display the requests received, and its responses
                 System.out.println("===== Client: " + sentence);
 
                 // send response to client based on client input
@@ -64,31 +67,62 @@ public class SingleThreadUDPServer implements Runnable{
                 // log exception and go onto the next request;
             }
         }
+        stop();
     }
 
+    /**
+     * openServerSocket() opens the server socket for listening on port specified by the user.
+     */
     private void openServerSocket(){
         try{
-            SingleThreadUDPServer server = new SingleThreadUDPServer(this.port);
+            // The datagramSocket creates a server that binds to the specific port number
+            // so the clients know how to connect to.
+            serverSocket = new DatagramSocket(this.port);
             System.out.println("Server is listening on port " + this.port);
-            this.serverSocket.setSoTimeout(timeout_length);
         }
-        catch (SocketException e){ // The socket could not be opened, or bind to the specified port or address
+        catch (SocketException e){
+            // The socket could not be opened, or bind to the specified port or address
             System.err.println("Socket error: " + e.getMessage());
         }
     }
 
+    /**
+     * isStopped() checks if the server is running.
+     * @return boolean true for running, and false for not running.
+     */
     private synchronized boolean isStopped(){
         return this.isStopped;
     }
 
+    /**
+     * stop() update server's status of running or not running.
+     */
     public synchronized void stop(){
         this.isStopped = true;
-        this.serverSocket.close();
+        try{
+            this.serverSocket.close();
+        } catch(Exception e){
+            throw new RuntimeException("Error closing server", e);
+        }
     }
 
+
+    /**
+     * keyValService() implements protocol for client's request:
+     * Client should follow the format: <operation> <key> for get and delete.
+     * For example, get apple, delete apple.
+     * Client should follow the format: <operation> <parameter> <parameter> for put.
+     * For example, put apple 10.
+     * @param requestArr String[] client's request sentence.
+     * @param clientAddress InetAddress client's IP address.
+     * @param clientPort int client's port.
+     * @throws IOException
+     */
     private void keyValService(String[] requestArr, InetAddress clientAddress, int clientPort) throws IOException {
         if (requestArr.length < 2){
-            String errMsg = "Syntax: <operation> <parameter1>. For example: get apple";
+            String errMsg = "Malformed Request from [IP: " + clientAddress + ", Port: "+ clientPort + "]." +
+                    " Syntax: <operation> <key> OR <operation> <key> <value>. For example: get apple";
+            System.err.println(errMsg + "at time " + System.currentTimeMillis());
             sendResult(errMsg, clientAddress, clientPort);
             return;
         }
@@ -96,20 +130,23 @@ public class SingleThreadUDPServer implements Runnable{
         String action = requestArr[0]; // get, put, delete
         String key = requestArr[1];
 
-        switch(action) {
+        switch(action.toLowerCase()) { // normalize operation to lowercase.
             case "get":
                 if(store.containsKey(key)){
                     String price = store.get(key);
-                    sendResult("Price of " + key + " :" + price, clientAddress, clientPort);
+                    sendResult("Price of " + key + ": " + price, clientAddress, clientPort);
                 }
                 else{
-                    String errMsg = key + " not found.";
+                    String errMsg = key + " not found. Malformed Request from [IP: " + clientAddress + ", " +
+                            "Port: " + clientPort + "].";
+                    System.err.println(errMsg + " at time " + System.currentTimeMillis());
                     sendResult(errMsg, clientAddress, clientPort);
                 }
                 break;
             case "delete":
                 if (!store.containsKey(key)) {
-                    String errMsg =  key + " not found.";
+                    String errMsg =  key + " not found. Malformed Request from [IP: " + clientAddress + ", Port: " + clientPort + "].";
+                    System.err.println(errMsg + " at time " + System.currentTimeMillis());
                     sendResult(errMsg, clientAddress, clientPort);
                 }
                 else{
@@ -119,16 +156,27 @@ public class SingleThreadUDPServer implements Runnable{
                 break;
             case "put":
                 if (requestArr.length == 3) {
-                    store.put(key, requestArr[2]);
-                    sendResult("Put [" + key + ", " + requestArr[2] + "] in store succeed.", clientAddress, clientPort);
+                    if (isNumeric(requestArr[2])){
+                        store.put(key, requestArr[2]);
+                        sendResult("Put [" + key + ", " + requestArr[2] + "] in store succeed.", clientAddress, clientPort);
+                    }
+                    else{
+                        String errMsg = "Value should be numeric.";
+                        sendResult(errMsg, clientAddress, clientPort);
+                    }
                 }
                 else{
-                    String errMsg = "Syntax of put: <operation> <parameter1> <parameter2>. For example: put apple 10.";
+                    String errMsg = "Malformed Request from [IP: " + clientAddress + ", Port: "+ clientPort + "]." +
+                            "Syntax of put: <operation> <key> <value>. For example: put apple 10.";
+                    System.err.println(errMsg + " at time " + System.currentTimeMillis());
                     sendResult(errMsg, clientAddress, clientPort);
                 }
                 break;
             default:
-                sendResult("Operation or key or value incorrect. Syntax: <operation> <parameter1>...", clientAddress, clientPort);
+                String errMsg = "Malformed Request from [IP: " + clientAddress + ", Port: "+ clientPort + " ]. " +
+                        "Syntax: <operation> <key>...";
+                System.err.println(errMsg + "at time " + System.currentTimeMillis());
+                sendResult(errMsg, clientAddress, clientPort);
         }
     }
 
@@ -137,23 +185,35 @@ public class SingleThreadUDPServer implements Runnable{
         serverSocket.send(response);
     }
 
+    /**
+     * isNumeric() checks if user request of "PUT" contains numeric value.
+     * For example, "put apple 0" is valid, whereas "put apple zero" is invalid.
+     * @param strNum
+     * @return
+     */
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args) throws SocketException {
         if (args.length < 1) {
             System.out.println("Syntax: SingleThreadUDPServer <port>");
             return;
         }
-
-        SingleThreadUDPServer server = new SingleThreadUDPServer(Integer.parseInt(args[0]));
-        new Thread(server).start();
-
+        SingleThreadUDPServer server;
         try{
-            Thread.sleep(60*1000);
-        } catch(InterruptedException e){
-            e.printStackTrace();
+            server = new SingleThreadUDPServer(Integer.parseInt(args[0]));
+            new Thread(server).start();
+        } catch (Exception e) {
+            System.err.println("I/O error: " + e.getMessage());
         }
-        System.out.println("Stopping Server");
-        server.stop();
-
     }
-
 }
