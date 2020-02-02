@@ -26,7 +26,7 @@ public class ClientUDP {
         this.address = InetAddress.getByName(address);
         this.port = port;
         socket = new DatagramSocket();
-        clientScanner = new Scanner(new File("ClientRequestTCP.txt"));
+        clientScanner = new Scanner(new File("./ClientRequestUDP.txt"));
     }
 
 

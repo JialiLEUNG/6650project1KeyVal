@@ -42,7 +42,7 @@ public class ClientTCP {
             // Read data from the server using an InputStream
             InputStream input = socket.getInputStream();
 
-            Scanner clientScanner = new Scanner(new File("ClientRequestTCP.txt"));
+            Scanner clientScanner = new Scanner(new File("./ClientRequestTCP.txt"));
 
             while(socket.isConnected()){
                 while (clientScanner.hasNext()){

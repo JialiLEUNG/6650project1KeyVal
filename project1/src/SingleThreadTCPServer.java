@@ -122,7 +122,7 @@ public class SingleThreadTCPServer implements Runnable{
             case "get":
                 if(store.containsKey(key)){
                     String price = store.get(key);
-                    writer.println("Price of " + key + ": " + price);
+                    writer.println("Price of " + key + ": " + price + " at time " + System.currentTimeMillis());
                 }
                 else{
                     String errMsg = key + " not found. Malformed Request from [IP: " + clientAddress + ", " +
@@ -139,14 +139,14 @@ public class SingleThreadTCPServer implements Runnable{
                 }
                 else{
                     store.remove(key);
-                    writer.println("Delete " + key + " succeed.");
+                    writer.println("Delete " + key + " succeed. " + "at time " + System.currentTimeMillis());
                 }
                 break;
             case "put":
                 if (requestArr.length == 3) {
                     if (isNumeric(requestArr[2])){
                         store.put(key, requestArr[2]);
-                        writer.println("Put [" + key + ", " + requestArr[2] + "] in store succeed.");
+                        writer.println("Put [" + key + ", " + requestArr[2] + "] in store succeed. " + "at time " + System.currentTimeMillis());
                     }
                     else{
                         String errMsg = "Value should be numeric.";
@@ -184,7 +184,7 @@ public class SingleThreadTCPServer implements Runnable{
     private void openServerSocket(){
         try{
             this.serverSocket = new ServerSocket(this.port);
-            System.out.println("Server is listening on port " + port);
+            System.out.println("TCP Server is listening on port " + port);
             // set timeout to prevent stalled connections.
 //            this.serverSocket.setSoTimeout(timeout_length);
         } catch (SocketTimeoutException e){

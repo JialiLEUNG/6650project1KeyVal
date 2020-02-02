@@ -78,7 +78,7 @@ public class SingleThreadUDPServer implements Runnable{
             // The datagramSocket creates a server that binds to the specific port number
             // so the clients know how to connect to.
             serverSocket = new DatagramSocket(this.port);
-            System.out.println("Server is listening on port " + this.port);
+            System.out.println("UDP Server is listening on port " + this.port);
         }
         catch (SocketException e){
             // The socket could not be opened, or bind to the specified port or address
@@ -134,7 +134,7 @@ public class SingleThreadUDPServer implements Runnable{
             case "get":
                 if(store.containsKey(key)){
                     String price = store.get(key);
-                    sendResult("Price of " + key + ": " + price, clientAddress, clientPort);
+                    sendResult("Price of " + key + ": " + price + " at time " + System.currentTimeMillis(), clientAddress, clientPort);
                 }
                 else{
                     String errMsg = key + " not found. Malformed Request from [IP: " + clientAddress + ", " +
@@ -151,14 +151,14 @@ public class SingleThreadUDPServer implements Runnable{
                 }
                 else{
                     store.remove(key);
-                    sendResult("Delete " + key + " succeed.", clientAddress, clientPort);
+                    sendResult("Delete " + key + " succeed. " + "at time " + System.currentTimeMillis(), clientAddress, clientPort);
                 }
                 break;
             case "put":
                 if (requestArr.length == 3) {
                     if (isNumeric(requestArr[2])){
                         store.put(key, requestArr[2]);
-                        sendResult("Put [" + key + ", " + requestArr[2] + "] in store succeed.", clientAddress, clientPort);
+                        sendResult("Put [" + key + ", " + requestArr[2] + "] in store succeed. " + "at time " + System.currentTimeMillis(), clientAddress, clientPort);
                     }
                     else{
                         String errMsg = "Value should be numeric.";
