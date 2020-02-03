@@ -35,7 +35,7 @@ public class ClientTCP {
         int port = Integer.parseInt(args[1]);
 
         try(Socket socket = new Socket(ip, port)){
-            // set the socket timeout for 5 seconds
+            // set the socket timeout for 5 seconds to prevent stalled connection.
             socket.setSoTimeout(5000);
             // Send data to the server using an OutputStream
             OutputStream output = socket.getOutputStream();
