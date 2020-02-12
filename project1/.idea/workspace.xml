@@ -7,7 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="667de30c-9cdd-43a3-a7ef-7a4a0604fd1e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/ClientTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientTCP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project1 NEU 2020.docx" beforeDir="false" afterPath="$PROJECT_DIR$/Project1 NEU 2020.docx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +26,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SingleThreadTCPServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1210">
-              <caret line="187" column="23" selection-start-line="187" selection-start-column="19" selection-end-line="187" selection-end-column="23" />
+            <state relative-caret-position="229">
+              <caret line="54" column="62" lean-forward="true" selection-start-line="54" selection-start-column="62" selection-end-line="54" selection-end-column="62" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="imports" expanded="true" />
@@ -38,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SingleThreadUDPServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
-              <caret line="115" column="7" selection-start-line="115" selection-start-column="7" selection-end-line="117" selection-end-column="43" />
+            <state relative-caret-position="289">
+              <caret line="63" column="30" lean-forward="true" selection-start-line="63" selection-start-column="30" selection-end-line="63" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -50,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ClientTCP.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-149">
-              <caret line="34" column="42" lean-forward="true" selection-start-line="34" selection-start-column="42" selection-end-line="34" selection-end-column="42" />
+            <state relative-caret-position="180">
+              <caret line="34" column="42" selection-start-line="34" selection-start-column="42" selection-end-line="34" selection-end-column="42" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -62,7 +63,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ClientUDP.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
+            <state relative-caret-position="375">
               <caret line="37" column="31" selection-start-line="37" selection-start-column="31" selection-end-line="37" selection-end-column="31" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
@@ -83,7 +84,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>logging</find>
       <find>rec</find>
       <find>syn</find>
       <find>run</find>
@@ -113,6 +113,7 @@
       <find>mill</find>
       <find>on port</find>
       <find>time</find>
+      <find>address</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -136,6 +137,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="64" />
     <option name="y" value="23" />
     <option name="width" value="1391" />
     <option name="height" value="853" />
@@ -195,6 +197,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Artifacts" />
@@ -225,18 +228,19 @@
       <option name="presentableId" value="Default" />
       <updated>1580100036077</updated>
       <workItem from="1580100039388" duration="72220000" />
-      <workItem from="1580635763486" duration="355000" />
+      <workItem from="1580635763486" duration="958000" />
+      <workItem from="1580798071578" duration="730000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72575000" />
+    <option name="totallyTimeSpent" value="73908000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1391" height="853" extended-state="0" />
+    <frame x="64" y="23" width="1391" height="853" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19866568" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20163083" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -326,9 +330,19 @@
     <entry file="file://$PROJECT_DIR$/src/FileHandler.java" />
     <entry file="file://$PROJECT_DIR$/src/ServerUDP.java" />
     <entry file="file://$PROJECT_DIR$/src/MultiThreadServer.java" />
+    <entry file="file://$PROJECT_DIR$/src/ClientTCP.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="34" column="42" selection-start-line="34" selection-start-column="42" selection-end-line="34" selection-end-column="42" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ClientUDP.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
+        <state relative-caret-position="375">
           <caret line="37" column="31" selection-start-line="37" selection-start-column="31" selection-end-line="37" selection-end-column="31" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
@@ -337,20 +351,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ClientTCP.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-149">
-          <caret line="34" column="42" lean-forward="true" selection-start-line="34" selection-start-column="42" selection-end-line="34" selection-end-column="42" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/SingleThreadTCPServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1210">
-          <caret line="187" column="23" selection-start-line="187" selection-start-column="19" selection-end-line="187" selection-end-column="23" />
+        <state relative-caret-position="229">
+          <caret line="54" column="62" lean-forward="true" selection-start-line="54" selection-start-column="62" selection-end-line="54" selection-end-column="62" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
@@ -360,8 +364,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SingleThreadUDPServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="115" column="7" selection-start-line="115" selection-start-column="7" selection-end-line="117" selection-end-column="43" />
+        <state relative-caret-position="289">
+          <caret line="63" column="30" lean-forward="true" selection-start-line="63" selection-start-column="30" selection-end-line="63" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
